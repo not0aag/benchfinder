@@ -1,0 +1,7 @@
+pnpm-lock.yaml
+dist/
+coverage/
+.turbo/
+.expo/
+apps/mobile/android/
+apps/mobile/ios/
