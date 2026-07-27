@@ -57,6 +57,7 @@ export const mobileBoundaries = {
 
 // packages/domain must stay dependency-free (CLAUDE.md rule 6)
 export const domainPurity = {
+  files: ['src/**'],
   rules: {
     'no-restricted-imports': [
       'error',
