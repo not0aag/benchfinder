@@ -60,7 +60,7 @@ Solo developer. Optimize for maintainability by one person, not for team through
 
 - Direct and terse. No filler, no preamble.
 - No em dashes.
-- Comments explain *why*, never *what*. If the what is unclear, rename things.
+- Comments explain _why_, never _what_. If the what is unclear, rename things.
 - No "AI-sounding" prose in READMEs. Write like a developer explaining to another developer.
 
 ---

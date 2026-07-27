@@ -10,15 +10,15 @@
 
 The original spec proposed Firebase/Firestore + Google Maps SDK + geohashing + admin-gated verification. That stack works for a single-city MVP and breaks in specific, predictable ways at the scale the mission statement describes. Seven decisions are revised:
 
-| # | Original | Revised | Reason |
-|---|----------|---------|--------|
-| 1 | Build the bench database from scratch | Seed from OpenStreetMap, differentiate on metadata + photos | ~5M benches are already mapped globally. Starting at zero is the single biggest risk to the mission. |
-| 2 | Cloud Firestore | Postgres + PostGIS (Supabase) | Geospatial queries, spatial dedupe, analytics, and per-read cost. Firestore cannot express the core query. |
-| 3 | Geohash range queries | PostGIS GiST index + `ST_AsMVT` vector tiles | Geohash needs 9 parallel queries + client-side filtering, cannot combine with attribute filters, and re-fetches on every pan. |
-| 4 | Google Maps SDK + marker clustering | MapLibre Native + custom vector tile source | Google Maps SDK cannot host custom vector tile layers. Marker clustering caps out around 10k points. Also unlocks offline basemaps. |
-| 5 | Admin-gated verification queue | Optimistic publish + reputation + confirmation microtasks | An admin-approval gate makes the founder the throughput ceiling. Fails at city #2. |
-| 6 | Cloud AI image validation | On-device gate first, cloud VLM only for ambiguous cases | 95% of the decision is free on-device. Cloud-first costs scale linearly with submissions. |
-| 7 | Expo vs CLI (open question) | Expo with prebuild / Continuous Native Generation | Config plugins cover every native dep needed. EAS Update ships JS fixes without store review. |
+| #   | Original                              | Revised                                                     | Reason                                                                                                                              |
+| --- | ------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Build the bench database from scratch | Seed from OpenStreetMap, differentiate on metadata + photos | ~5M benches are already mapped globally. Starting at zero is the single biggest risk to the mission.                                |
+| 2   | Cloud Firestore                       | Postgres + PostGIS (Supabase)                               | Geospatial queries, spatial dedupe, analytics, and per-read cost. Firestore cannot express the core query.                          |
+| 3   | Geohash range queries                 | PostGIS GiST index + `ST_AsMVT` vector tiles                | Geohash needs 9 parallel queries + client-side filtering, cannot combine with attribute filters, and re-fetches on every pan.       |
+| 4   | Google Maps SDK + marker clustering   | MapLibre Native + custom vector tile source                 | Google Maps SDK cannot host custom vector tile layers. Marker clustering caps out around 10k points. Also unlocks offline basemaps. |
+| 5   | Admin-gated verification queue        | Optimistic publish + reputation + confirmation microtasks   | An admin-approval gate makes the founder the throughput ceiling. Fails at city #2.                                                  |
+| 6   | Cloud AI image validation             | On-device gate first, cloud VLM only for ambiguous cases    | 95% of the decision is free on-device. Cloud-first costs scale linearly with submissions.                                           |
+| 7   | Expo vs CLI (open question)           | Expo with prebuild / Continuous Native Generation           | Config plugins cover every native dep needed. EAS Update ships JS fixes without store review.                                       |
 
 Everything else in the brief (TypeScript, React Query, Zustand, Vision Camera, Sentry, ESLint/Prettier/Husky, GitHub Actions) is kept.
 
@@ -30,13 +30,13 @@ Everything else in the brief (TypeScript, React Query, Zustand, Vision Camera, S
 
 It already exists. `amenity=bench` is a mature, widely-used OSM tag with several million node instances worldwide and a well-documented schema that already covers most of the requested metadata: `backrest`, `armrest`, `material`, `colour`, `seats`, `direction`, `covered`, `lit`, `access`. The OSM wiki also documents companion tags for the "nearby" attributes: `amenity=toilets`, `amenity=drinking_water`, `leisure=playground`, `amenity=parking`.
 
-A from-scratch competitor to OSM loses. A product built *on top of* OSM starts on day one with global coverage and competes on the axis OSM is weak at: **photos, condition, ratings, comfort, scenery, and freshness.**
+A from-scratch competitor to OSM loses. A product built _on top of_ OSM starts on day one with global coverage and competes on the axis OSM is weak at: **photos, condition, ratings, comfort, scenery, and freshness.**
 
 ### Revised positioning
 
 > BenchFinder is a rich-metadata, photo-first layer over the world's public seating, seeded from OpenStreetMap and enriched by community contributions.
 
-Day-one coverage in Oakville: whatever OSM already has (likely 200-800 benches in the Oakville/Bronte/Kerr Village/waterfront areas). Alen's personal verification work then becomes *enrichment and verification*, not cold-start data entry. That is a 10x better use of the same hours.
+Day-one coverage in Oakville: whatever OSM already has (likely 200-800 benches in the Oakville/Bronte/Kerr Village/waterfront areas). Alen's personal verification work then becomes _enrichment and verification_, not cold-start data entry. That is a 10x better use of the same hours.
 
 ### License handling (non-negotiable, get this right at schema time)
 
@@ -49,8 +49,9 @@ bench_osm_links     <- Join table. osm_id <-> bench_id. Deliberately thin.
 ```
 
 **Rules encoded in the schema:**
+
 - `osm_features` is refreshed from Geofabrik extracts. Read-only from the app's perspective.
-- `bf_benches` rows created *from* an OSM feature store `origin='osm'` and a `source_osm_id`. Coordinates copied from OSM are ODbL-derived; treat any export containing them as a derived database and publish it under ODbL.
+- `bf_benches` rows created _from_ an OSM feature store `origin='osm'` and a `source_osm_id`. Coordinates copied from OSM are ODbL-derived; treat any export containing them as a derived database and publish it under ODbL.
 - User-contributed rows (`origin='user'`) with independently-captured GPS are clean. Photos, ratings, and comments are your own content regardless of origin, under your own ToS.
 - Publish a public ODbL-licensed export of the OSM-derived subset. This is the cheapest possible compliance posture and it buys community goodwill.
 - Attribution string "© OpenStreetMap contributors" ships in the app's About screen and on any map view using OSM-derived tiles.
@@ -95,12 +96,12 @@ Firestore cannot express it. Concretely:
 
 Supabase bundles Postgres+PostGIS, Auth, Storage, Edge Functions, and Realtime with a managed control plane. For a solo founder that is the correct trade. Alternatives considered:
 
-| Option | Verdict |
-|--------|---------|
-| **Supabase** | Chosen. PostGIS enabled by extension. RLS-native. Storage with image transforms. Reasonable free tier. |
-| Neon + separate auth (Clerk) + separate storage (R2) | More assembly, more moving parts, slightly better cold-start economics. Reconsider at Series A scale. |
-| AWS RDS + Cognito + S3 | Most control, most ops burden. Wrong for a solo project. Note: this is closest to what you already know from TD, so it is a real fallback. |
-| Firebase | Rejected above. |
+| Option                                               | Verdict                                                                                                                                    |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Supabase**                                         | Chosen. PostGIS enabled by extension. RLS-native. Storage with image transforms. Reasonable free tier.                                     |
+| Neon + separate auth (Clerk) + separate storage (R2) | More assembly, more moving parts, slightly better cold-start economics. Reconsider at Series A scale.                                      |
+| AWS RDS + Cognito + S3                               | Most control, most ops burden. Wrong for a solo project. Note: this is closest to what you already know from TD, so it is a real fallback. |
+| Firebase                                             | Rejected above.                                                                                                                            |
 
 ### Migration insurance
 
@@ -135,6 +136,7 @@ SELECT ST_AsMVT(mvtgeom.*, 'benches') FROM mvtgeom;
 ```
 
 **Why this wins:**
+
 - One HTTP request per tile, not per bench.
 - Tiles are immutable-ish and cache at the CDN edge. Second user to view downtown Oakville pays zero database cost.
 - MapLibre renders tiles on the GPU, natively, off the JS thread. A million points is a non-event.
@@ -145,13 +147,13 @@ SELECT ST_AsMVT(mvtgeom.*, 'benches') FROM mvtgeom;
 
 ### Why MapLibre Native over Google Maps SDK
 
-| | Google Maps SDK (react-native-maps) | MapLibre Native RN |
-|---|---|---|
-| Custom vector tile source | No. Raster overlays only. | Yes. First-class. |
-| Offline basemap packs | No | Yes |
-| Style control (dark mode, brand) | Limited preset styles | Full style spec |
-| Cost | Mobile map loads free, unlimited | Free, self-hosted or Protomaps/MapTiler |
-| Familiarity | High (you used it on GOSpot) | Learning curve, ~1 day |
+|                                  | Google Maps SDK (react-native-maps) | MapLibre Native RN                      |
+| -------------------------------- | ----------------------------------- | --------------------------------------- |
+| Custom vector tile source        | No. Raster overlays only.           | Yes. First-class.                       |
+| Offline basemap packs            | No                                  | Yes                                     |
+| Style control (dark mode, brand) | Limited preset styles               | Full style spec                         |
+| Cost                             | Mobile map loads free, unlimited    | Free, self-hosted or Protomaps/MapTiler |
+| Familiarity                      | High (you used it on GOSpot)        | Learning curve, ~1 day                  |
 
 Google Maps mobile SDK map loads are free with no usage limits, so cost is not the argument here. The argument is the custom vector tile layer, which Google's mobile SDK does not support. That capability is load-bearing for this app.
 
@@ -174,6 +176,7 @@ The historical objection to Expo (cannot use custom native modules) has been dea
 - `expo-location`, `expo-image`, `expo-image-manipulator`, `expo-file-system` — first-party
 
 **What Expo buys that materially matters here:**
+
 - **EAS Update.** Ship a JS-only bug fix in minutes, not a 1-3 day store review. For a solo founder this is the single highest-leverage tool in the stack.
 - **EAS Build.** iOS builds without owning a Mac. Given the Sheridan lab Mac constraints you have hit before, this is not hypothetical.
 - **expo-router.** File-based routing, typed routes, deep linking (`benchfinder://bench/{id}`) mostly for free. Replaces hand-configured React Navigation.
@@ -222,15 +225,15 @@ Reactive moderation
 
 Start every account at 10. Simple, auditable, no ML:
 
-| Event | Delta |
-|-------|-------|
-| Submission reaches `confirmed` | +5 |
-| Submission reaches `verified` | +10 |
-| Submission rejected as spam/duplicate | -15 |
-| Accurate confirmation (agrees with eventual consensus) | +1 |
-| Inaccurate confirmation | -3 |
-| Account age > 30 days, > 3 confirmed benches | +10 one-time |
-| Manual admin grant (trusted contributor) | +50 |
+| Event                                                  | Delta        |
+| ------------------------------------------------------ | ------------ |
+| Submission reaches `confirmed`                         | +5           |
+| Submission reaches `verified`                          | +10          |
+| Submission rejected as spam/duplicate                  | -15          |
+| Accurate confirmation (agrees with eventual consensus) | +1           |
+| Inaccurate confirmation                                | -3           |
+| Account age > 30 days, > 3 confirmed benches           | +10 one-time |
+| Manual admin grant (trusted contributor)               | +50          |
 
 Cap at 100. Recompute nightly via `pg_cron` into a materialized `user_trust` table. Never compute on the read path.
 
@@ -246,16 +249,16 @@ Cap at 100. Recompute nightly via `pg_cron` into a materialized `user_trust` tab
 
 Ranked by value-per-dollar. Build in this order.
 
-| Feature | Approach | Cost | Priority |
-|---------|----------|------|----------|
-| **Blur detection** | Variance of Laplacian, pure math, on-device | $0 | P0 |
-| **Spatial dedupe** | `ST_DWithin` 15 m + attribute similarity | ~$0 | P0 |
-| **Is it a bench?** | On-device SSDLite-MobileNetV3 or MobileNetV2 classifier via `react-native-executorch` (VisionCamera v5 `runOnFrame`) or `react-native-fast-tflite` (VisionCamera v4). Live feedback in the capture viewfinder. | $0 | P0 |
-| **Photo dedupe** | Perceptual hash (pHash) + Hamming distance, computed on-device, compared server-side. Catches the same photo re-uploaded at a different pin. | ~$0 | P1 |
-| **Spam / fraud** | Rules first: submission velocity, GPS teleportation (impossible speed between consecutive submissions), duplicate device fingerprint, text profanity filter. No ML needed for v1. | $0 | P1 |
-| **Metadata suggestion** | Cloud VLM (Gemini Flash / Claude Haiku), batched, called once per submission only after it passes the on-device gate. Suggests material, backrest, armrests, condition, shade. User confirms, never auto-applies. | ~$0.001-0.005/submission | P2 |
-| **Ambiguous-case adjudication** | Same VLM, invoked only when the on-device classifier confidence lands in 0.35-0.65. Expected to be < 10% of submissions. | Marginal | P2 |
-| **Face / plate blurring** | On-device face detection (ML Kit / Vision) + blur before upload. This is a privacy requirement in several jurisdictions, not a nice-to-have. | $0 | P1 |
+| Feature                         | Approach                                                                                                                                                                                                          | Cost                     | Priority |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | -------- |
+| **Blur detection**              | Variance of Laplacian, pure math, on-device                                                                                                                                                                       | $0                       | P0       |
+| **Spatial dedupe**              | `ST_DWithin` 15 m + attribute similarity                                                                                                                                                                          | ~$0                      | P0       |
+| **Is it a bench?**              | On-device SSDLite-MobileNetV3 or MobileNetV2 classifier via `react-native-executorch` (VisionCamera v5 `runOnFrame`) or `react-native-fast-tflite` (VisionCamera v4). Live feedback in the capture viewfinder.    | $0                       | P0       |
+| **Photo dedupe**                | Perceptual hash (pHash) + Hamming distance, computed on-device, compared server-side. Catches the same photo re-uploaded at a different pin.                                                                      | ~$0                      | P1       |
+| **Spam / fraud**                | Rules first: submission velocity, GPS teleportation (impossible speed between consecutive submissions), duplicate device fingerprint, text profanity filter. No ML needed for v1.                                 | $0                       | P1       |
+| **Metadata suggestion**         | Cloud VLM (Gemini Flash / Claude Haiku), batched, called once per submission only after it passes the on-device gate. Suggests material, backrest, armrests, condition, shade. User confirms, never auto-applies. | ~$0.001-0.005/submission | P2       |
+| **Ambiguous-case adjudication** | Same VLM, invoked only when the on-device classifier confidence lands in 0.35-0.65. Expected to be < 10% of submissions.                                                                                          | Marginal                 | P2       |
+| **Face / plate blurring**       | On-device face detection (ML Kit / Vision) + blur before upload. This is a privacy requirement in several jurisdictions, not a nice-to-have.                                                                      | $0                       | P1       |
 
 **Explicitly rejected:** training a custom bench detector (no dataset, no need — COCO already has `bench` as a class), embedding-based duplicate detection at v1 (pgvector is there when spatial+pHash proves insufficient, not before), LLM-based moderation of every submission (cost scales with abuse, which is exactly backwards).
 
@@ -412,6 +415,7 @@ CREATE INDEX idx_modevents_bench ON moderation_events (bench_id, created_at DESC
 ```
 
 **Design notes:**
+
 - `geography` not `geometry` for storage: metres-accurate `ST_DWithin` without projection juggling. Cast to `geometry` inside tile generation where the planar operators are faster.
 - Nullable booleans everywhere physical. `NULL` means "nobody has checked," which is a different and more useful fact than `false`.
 - `nearby` is a derived jsonb blob rebuilt nightly by a spatial job against `osm_features`. Never computed at read time, never user-entered.
@@ -510,16 +514,16 @@ benchfinder/
 
 ## 9. Testing
 
-| Layer | Tool | What it covers |
-|-------|------|----------------|
-| Domain logic | Vitest | Trust scoring, dedupe scoring, state machine transitions. Pure functions, fast, high coverage. |
-| Components | Jest + React Native Testing Library | Rendering, accessibility roles, user interaction. |
-| Data access | Vitest + testcontainers (real Postgres+PostGIS) | Spatial queries against real PostGIS. Never mock the database for spatial code. |
-| RLS policies | **pgTAP** | Every policy gets a test asserting both allow and deny. Non-negotiable: RLS bugs are silent data leaks. |
-| Network | MSW | Deterministic API responses in component tests. |
-| E2E mobile | **Maestro** | YAML flows, works with Expo dev builds, far less brittle than Detox. |
-| E2E admin | Playwright | Moderation queue, merge flow, auth. |
-| Visual | Storybook + Chromatic (optional) | Dark mode + tablet layout regressions. |
+| Layer        | Tool                                            | What it covers                                                                                          |
+| ------------ | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Domain logic | Vitest                                          | Trust scoring, dedupe scoring, state machine transitions. Pure functions, fast, high coverage.          |
+| Components   | Jest + React Native Testing Library             | Rendering, accessibility roles, user interaction.                                                       |
+| Data access  | Vitest + testcontainers (real Postgres+PostGIS) | Spatial queries against real PostGIS. Never mock the database for spatial code.                         |
+| RLS policies | **pgTAP**                                       | Every policy gets a test asserting both allow and deny. Non-negotiable: RLS bugs are silent data leaks. |
+| Network      | MSW                                             | Deterministic API responses in component tests.                                                         |
+| E2E mobile   | **Maestro**                                     | YAML flows, works with Expo dev builds, far less brittle than Detox.                                    |
+| E2E admin    | Playwright                                      | Moderation queue, merge flow, auth.                                                                     |
+| Visual       | Storybook + Chromatic (optional)                | Dark mode + tablet layout regressions.                                                                  |
 
 **Coverage targets:** `packages/domain` 90%+. `data-access` 80%+. UI components 60%+. E2E covers the five critical paths only (sign in, view map, view detail, submit bench, moderate submission). Do not chase coverage in UI code; chase it in the logic that can silently corrupt data.
 
@@ -527,20 +531,20 @@ benchfinder/
 
 ## 10. Security decisions
 
-| Decision | Rationale |
-|----------|-----------|
-| RLS on every table, no exceptions | Authorization at the data layer holds regardless of which client reaches it. An admin dashboard bug cannot become a data breach. |
-| State transitions via `SECURITY DEFINER` RPC only | Client can request, cannot assert. Prevents self-promotion to `verified`. |
-| Signed upload URLs, server-issued, single-use, 5 min TTL | Client never holds broad Storage write credentials. |
-| Server-side MIME sniff + re-encode on upload | Rejects polyglot files and strips embedded payloads. Never trust the client-declared content type. |
-| EXIF GPS read server-side, then stripped from the stored derivative | Needed for validation, dangerous to serve. Users photograph benches near their homes. |
-| Face/plate blur before public display | Privacy obligation in several jurisdictions and basic decency. |
-| Rate limits at the edge function: 10 submissions/hour, 20 confirmations/day, 100 photo uploads/day per user | Cheapest possible abuse containment. Enforce server-side; client-side limits are advisory only. |
-| Zod validation at every trust boundary | Same schemas shared between client and edge function via `api-contracts`. One definition, no drift. |
-| Anonymous auth allowed for read, required-account for write | Lowers the barrier to browsing; keeps accountability on contribution. |
-| Coordinates fuzzed to 5 decimal places (~1 m) in public tiles | Beyond 1 m is false precision and mild fingerprinting risk. |
-| Sentry with `beforeSend` PII scrubber | Never ship user coordinates or emails to error tracking. |
-| No secrets in `app.config.ts` | EAS secrets for build-time; edge functions hold anything genuinely sensitive. The Supabase anon key is public by design; RLS is what protects the data. |
+| Decision                                                                                                    | Rationale                                                                                                                                               |
+| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| RLS on every table, no exceptions                                                                           | Authorization at the data layer holds regardless of which client reaches it. An admin dashboard bug cannot become a data breach.                        |
+| State transitions via `SECURITY DEFINER` RPC only                                                           | Client can request, cannot assert. Prevents self-promotion to `verified`.                                                                               |
+| Signed upload URLs, server-issued, single-use, 5 min TTL                                                    | Client never holds broad Storage write credentials.                                                                                                     |
+| Server-side MIME sniff + re-encode on upload                                                                | Rejects polyglot files and strips embedded payloads. Never trust the client-declared content type.                                                      |
+| EXIF GPS read server-side, then stripped from the stored derivative                                         | Needed for validation, dangerous to serve. Users photograph benches near their homes.                                                                   |
+| Face/plate blur before public display                                                                       | Privacy obligation in several jurisdictions and basic decency.                                                                                          |
+| Rate limits at the edge function: 10 submissions/hour, 20 confirmations/day, 100 photo uploads/day per user | Cheapest possible abuse containment. Enforce server-side; client-side limits are advisory only.                                                         |
+| Zod validation at every trust boundary                                                                      | Same schemas shared between client and edge function via `api-contracts`. One definition, no drift.                                                     |
+| Anonymous auth allowed for read, required-account for write                                                 | Lowers the barrier to browsing; keeps accountability on contribution.                                                                                   |
+| Coordinates fuzzed to 5 decimal places (~1 m) in public tiles                                               | Beyond 1 m is false precision and mild fingerprinting risk.                                                                                             |
+| Sentry with `beforeSend` PII scrubber                                                                       | Never ship user coordinates or emails to error tracking.                                                                                                |
+| No secrets in `app.config.ts`                                                                               | EAS secrets for build-time; edge functions hold anything genuinely sensitive. The Supabase anon key is public by design; RLS is what protects the data. |
 
 ---
 
@@ -548,16 +552,16 @@ benchfinder/
 
 Assume 10,000 MAU, 50,000 monthly map sessions, 2,000 monthly submissions.
 
-| Line item | Approach | Est. monthly |
-|-----------|----------|--------------|
-| Basemap tiles | Protomaps PMTiles on Cloudflare R2 | ~$1 (egress free on R2) |
-| Bench vector tiles | Edge function + CDN cache, ~90% hit rate | ~$5 |
-| Postgres | Supabase Pro | $25 |
-| Storage (photos) | ~2,000 photos/mo × 300 KB × derivatives | ~$5 |
-| VLM metadata suggestion | 2,000 × ~$0.003 | ~$6 |
-| Sentry | Free tier likely sufficient | $0 |
-| EAS Build/Update | Production plan | $19-99 |
-| **Total** | | **~$60-140/mo** |
+| Line item               | Approach                                 | Est. monthly            |
+| ----------------------- | ---------------------------------------- | ----------------------- |
+| Basemap tiles           | Protomaps PMTiles on Cloudflare R2       | ~$1 (egress free on R2) |
+| Bench vector tiles      | Edge function + CDN cache, ~90% hit rate | ~$5                     |
+| Postgres                | Supabase Pro                             | $25                     |
+| Storage (photos)        | ~2,000 photos/mo × 300 KB × derivatives  | ~$5                     |
+| VLM metadata suggestion | 2,000 × ~$0.003                          | ~$6                     |
+| Sentry                  | Free tier likely sufficient              | $0                      |
+| EAS Build/Update        | Production plan                          | $19-99                  |
+| **Total**               |                                          | **~$60-140/mo**         |
 
 The same workload on the original Firestore + Google Maps design: map document reads alone at 50,000 sessions × conservative 300 doc reads/session = 15M reads/month, plus Places API calls if used for search. Comfortably 10-30x the above. The vector tile decision is the single largest cost lever in the whole architecture.
 
@@ -568,42 +572,52 @@ The same workload on the original Firestore + Google Maps design: map document r
 Each phase has a demoable exit criterion. Do not start phase N+1 until phase N's criterion is met.
 
 ### Phase 0: Foundation (1 week)
+
 Monorepo scaffold, Turborepo, tsconfig strict, ESLint + boundaries plugin, Prettier, Husky + lint-staged, commitlint, GitHub Actions (typecheck, lint, test, build). Expo app with dev client building on EAS for both platforms.
 **Exit:** `pnpm build` and `pnpm test` green in CI. A dev build installs on a physical Android device and an iOS simulator.
 
 ### Phase 1: Data foundation + OSM ingestion (1 week)
+
 Supabase project, PostGIS enabled, full schema migration, RLS policies, pgTAP tests for every policy. `osm-import` pipeline: download Geofabrik Ontario extract, osmium filter `amenity=bench`, load into `osm_features`, promote into `bf_benches` with `origin='osm'`.
 **Exit:** Every OSM bench in Halton Region queryable. `SELECT count(*) FROM bf_benches WHERE origin='osm'` returns a real number. All pgTAP tests pass.
 
 ### Phase 2: Tile pipeline (3-4 days)
+
 `ST_AsMVT` edge function, LOD `min_zoom` computation, CDN cache headers, tile versioning.
 **Exit:** `curl /tiles/benches/14/4589/5975.mvt` returns valid MVT. Verified in a MapLibre web debug page before any mobile code is written.
 
 ### Phase 3: Map screen (1.5 weeks)
+
 MapLibre Native, Protomaps basemap, bench tile layer, style-spec clustering, marker colours by verification state, location permission + follow-me, dark mode, viewport-driven detail fetch, offline basemap pack for Halton.
 **Exit:** Smooth 60 fps pan/zoom over the full Ontario dataset on a mid-range Android device. Works in airplane mode with the cached pack.
 
 ### Phase 4: Bench detail (1 week)
+
 Detail sheet, photo carousel with `expo-image` caching, all metadata, ratings display, favourite/visit actions, share deep link, full accessibility pass (screen reader labels, dynamic type, 4.5:1 contrast), tablet layout.
 **Exit:** VoiceOver and TalkBack can complete the full read flow. Passes on a 10" tablet.
 
 ### Phase 5: Auth + profile (4 days)
+
 Supabase Auth (Apple, Google, email OTP), anonymous read, profile screen, my-contributions list, trust score display.
 **Exit:** Sign in on both platforms, RLS demonstrably blocks cross-user writes.
 
 ### Phase 6: Capture flow (2 weeks — the hardest phase)
+
 Vision Camera, on-device bench classifier with live viewfinder feedback, blur check, GPS capture + manual pin adjust, image compression pipeline, pHash, EXIF handling, offline submission queue with background sync, `submit-bench` edge function with all validation gates and trust routing.
 **Exit:** Submit a bench in airplane mode; it syncs on reconnect. A photo of a wall is rejected before upload with a clear message.
 
 ### Phase 7: Community verification (1 week)
+
 Confirmation microtasks with proximity gate, dispute flow, ratings submission, nightly trust recomputation job.
 **Exit:** A second account can confirm a bench and drive it to `confirmed`.
 
 ### Phase 8: Admin dashboard (1.5 weeks)
+
 React + Vite, moderation queue, side-by-side duplicate comparison with a merge action, bench editor, user management, analytics with PostGIS heatmap binning, full-text search.
 **Exit:** Full moderation loop performed end to end on real submissions.
 
 ### Phase 9: Production hardening (1 week)
+
 Sentry with PII scrubbing, performance tracing, rate limits verified under load, backup and restore drill, i18n scaffolding (`i18next`, en/fr — French matters for Canada), store listings, privacy policy, OSM attribution, ODbL export endpoint.
 **Exit:** Restore drill completed successfully from a backup. Store submissions accepted.
 
