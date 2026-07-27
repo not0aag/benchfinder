@@ -12,9 +12,16 @@
     "lint": "turbo run lint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "dev:mobile": "pnpm --filter mobile start"
+    "dev:mobile": "pnpm --filter mobile start",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@benchfinder/config": "workspace:*",
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
+    "eslint": "^10.8.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.2.0",
     "prettier": "^3.9.6",
     "turbo": "^2.10.7",
     "typescript": "^5.9.3"
