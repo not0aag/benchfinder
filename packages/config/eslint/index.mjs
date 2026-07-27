@@ -39,16 +39,40 @@ export const mobileBoundaries = {
       { type: 'feature', pattern: 'src/features/*', capture: ['slice'] },
       { type: 'shared', pattern: 'src/{components,lib,theme,i18n}/**' },
     ],
+    // Without a TS-aware resolver the plugin cannot classify import targets
+    // and silently skips them, which disables the rule entirely.
+    'import/resolver': {
+      typescript: {},
+    },
   },
   rules: {
-    'boundaries/element-types': [
+    'boundaries/dependencies': [
       'error',
       {
         default: 'disallow',
-        rules: [
-          { from: 'app', allow: ['feature', 'shared'] },
-          { from: 'feature', allow: [['feature', { slice: '${from.slice}' }], 'shared'] },
-          { from: 'shared', allow: ['shared'] },
+        policies: [
+          {
+            from: { element: { type: 'app' } },
+            allow: { to: { element: { type: ['feature', 'shared'] } } },
+          },
+          {
+            from: { element: { type: 'feature' } },
+            allow: [
+              {
+                to: {
+                  element: {
+                    type: 'feature',
+                    captured: { slice: '{{ from.element.captured.slice }}' },
+                  },
+                },
+              },
+              { to: { element: { type: 'shared' } } },
+            ],
+          },
+          {
+            from: { element: { type: 'shared' } },
+            allow: { to: { element: { type: 'shared' } } },
+          },
         ],
       },
     ],

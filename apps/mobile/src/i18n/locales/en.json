@@ -1,0 +1,20 @@
+{
+  "tabs": {
+    "map": "Map",
+    "nearby": "Nearby",
+    "contribute": "Contribute",
+    "profile": "Profile"
+  },
+  "map": {
+    "placeholder": "The bench map lands in Phase 3."
+  },
+  "nearby": {
+    "placeholder": "Nearby benches land in Phase 3."
+  },
+  "contribute": {
+    "placeholder": "Bench capture lands in Phase 6."
+  },
+  "profile": {
+    "placeholder": "Sign-in and profile land in Phase 5."
+  }
+}
