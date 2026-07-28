@@ -6,7 +6,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'BenchFinder',
   slug: 'benchfinder',
+  owner: 'alengeorges-team',
   version: '0.1.0',
+  extra: {
+    eas: {
+      // public project identifier, not a secret
+      projectId: '843d3170-6179-47af-894e-cbf8bfa40ccd',
+    },
+  },
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   scheme: 'benchfinder',
