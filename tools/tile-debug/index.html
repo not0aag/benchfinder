@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>BenchFinder tile debug</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+    <style>
+      html,
+      body,
+      #map {
+        margin: 0;
+        height: 100%;
+      }
+      #stats {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        z-index: 1;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 6px 10px;
+        font: 13px/1.4 monospace;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="stats">loading…</div>
+    <script>
+      // Dev tool only: renders the local tiles edge function over an OSM
+      // raster basemap. Not shipped anywhere.
+      const TILES = 'http://127.0.0.1:54321/functions/v1/tiles/benches/{z}/{x}/{y}.mvt?v=1';
+
+      const map = new maplibregl.Map({
+        container: 'map',
+        center: [-79.68, 43.43],
+        zoom: 12,
+        style: {
+          version: 8,
+          sources: {
+            osm: {
+              type: 'raster',
+              tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+              tileSize: 256,
+              attribution: '© OpenStreetMap contributors',
+            },
+            benches: {
+              type: 'vector',
+              tiles: [TILES],
+              minzoom: 0,
+              maxzoom: 14,
+            },
+          },
+          layers: [
+            { id: 'osm', type: 'raster', source: 'osm' },
+            {
+              id: 'benches',
+              type: 'circle',
+              source: 'benches',
+              'source-layer': 'benches',
+              paint: {
+                'circle-radius': 5,
+                'circle-stroke-width': 1.5,
+                'circle-stroke-color': '#ffffff',
+                // marker colours per arch doc section 5
+                'circle-color': [
+                  'match',
+                  ['get', 'verification_state'],
+                  'unconfirmed',
+                  '#f59e0b',
+                  'community',
+                  '#3b82f6',
+                  'confirmed',
+                  '#22c55e',
+                  'verified',
+                  '#15803d',
+                  'disputed',
+                  '#ef4444',
+                  '#9ca3af',
+                ],
+              },
+            },
+          ],
+        },
+      });
+
+      map.on('idle', () => {
+        const rendered = map.queryRenderedFeatures({ layers: ['benches'] });
+        document.getElementById('stats').textContent =
+          `zoom ${map.getZoom().toFixed(1)} — ${rendered.length} benches rendered`;
+      });
+    </script>
+  </body>
+</html>
