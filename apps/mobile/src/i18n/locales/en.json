@@ -6,7 +6,42 @@
     "profile": "Profile"
   },
   "map": {
-    "placeholder": "The bench map lands in Phase 3."
+    "followMe": "Follow my location",
+    "stopFollowing": "Stop following my location",
+    "locationDenied": "Location permission was denied. Enable it in system settings to use follow mode.",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  "bench": {
+    "title": "Bench",
+    "close": "Close",
+    "loading": "Loading bench…",
+    "error": "Could not load this bench.",
+    "yes": "Yes",
+    "no": "No",
+    "unknown": "Unknown",
+    "backrest": "Backrest",
+    "armrests": "Armrests",
+    "accessible": "Accessible",
+    "seats": "Seats",
+    "scenic": "Scenic",
+    "comfort": "Comfort",
+    "state": {
+      "unconfirmed": "Unconfirmed",
+      "community": "Community",
+      "confirmed": "Confirmed",
+      "verified": "Verified",
+      "disputed": "Disputed"
+    },
+    "materials": {
+      "wood": "Wood",
+      "metal": "Metal",
+      "concrete": "Concrete",
+      "stone": "Stone",
+      "plastic": "Plastic",
+      "composite": "Composite",
+      "mixed": "Mixed",
+      "unknown": "Unknown material"
+    }
   },
   "nearby": {
     "placeholder": "Nearby benches land in Phase 3."
