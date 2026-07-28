@@ -578,7 +578,8 @@ Monorepo scaffold, Turborepo, tsconfig strict, ESLint + boundaries plugin, Prett
 
 ### Phase 1: Data foundation + OSM ingestion (1 week)
 
-Supabase project, PostGIS enabled, full schema migration, RLS policies, pgTAP tests for every policy. `osm-import` pipeline: download Geofabrik Ontario extract, osmium filter `amenity=bench`, load into `osm_features`, promote into `bf_benches` with `origin='osm'`.
+Supabase project, PostGIS enabled, full schema migration, RLS policies, pgTAP tests for every policy. `osm-import` pipeline: load `amenity=bench` into `osm_features`, promote into `bf_benches` with `origin='osm'`.
+**Amendment (2026-07-28):** v1 ingestion queries the Overpass API per region (bbox), same `pnpm osm:import <region>` interface. Region-scale data volumes (~1-2k benches) are well within Overpass usage policy and need no binary tooling. Switch the fetch backend to Geofabrik extracts + osmium when scaling past a handful of regions; the load/promote SQL is backend-agnostic.
 **Exit:** Every OSM bench in Halton Region queryable. `SELECT count(*) FROM bf_benches WHERE origin='osm'` returns a real number. All pgTAP tests pass.
 
 ### Phase 2: Tile pipeline (3-4 days)
