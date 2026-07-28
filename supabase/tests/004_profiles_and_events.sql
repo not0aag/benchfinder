@@ -111,10 +111,11 @@ select throws_ok(
 reset role;
 set local role anon;
 select set_config('request.jwt.claims', '', true);
-select is(
-  (select count(*) from moderation_events),
-  0::bigint,
-  'anon cannot read the audit log'
+select throws_ok(
+  $$select count(*) from moderation_events$$,
+  '42501',
+  null,
+  'anon cannot read the audit log at all'
 );
 
 -- banned_until=null probe above must not have changed anything

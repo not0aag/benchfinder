@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(15);
+select plan(16);
 
 -- ---------- fixtures (as postgres, bypasses RLS) ----------
 insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
@@ -148,11 +148,18 @@ reset role;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000001","role":"authenticated"}', true);
 
-delete from bf_benches where id = '20000000-0000-0000-0000-000000000001';
+select throws_ok(
+  $$delete from bf_benches where id = '20000000-0000-0000-0000-000000000001'$$,
+  '42501',
+  null,
+  'no client can hard-delete a bench'
+);
+
+reset role;
 select is(
   (select count(*) from bf_benches where id = '20000000-0000-0000-0000-000000000001'),
   1::bigint,
-  'no client can hard-delete a bench'
+  'bench survives the delete attempt'
 );
 
 select * from finish();
