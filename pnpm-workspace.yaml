@@ -1,8 +1,10 @@
 packages:
   - apps/*
   - packages/*
+  - tools/*
 
 allowBuilds:
+  esbuild: true
   unrs-resolver: true
 
 # No web target: expo-router's web-only transitive deps (radix, vaul) want
