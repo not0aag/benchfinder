@@ -36,6 +36,17 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   plugins: [
     'expo-router',
     'expo-localization',
+    '@maplibre/maplibre-react-native',
+    [
+      'expo-location',
+      {
+        // foreground only: follow-me on the map and capture-time GPS.
+        // Background location is deliberately not requested.
+        locationWhenInUsePermission:
+          'BenchFinder uses your location to show nearby benches and to verify bench submissions.',
+        isAndroidBackgroundLocationEnabled: false,
+      },
+    ],
     [
       'expo-splash-screen',
       {
