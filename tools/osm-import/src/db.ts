@@ -52,6 +52,10 @@ export async function loadAndPromote(
     // TS for testability, but promotion is one set-based statement per run.
     const promoted = await promoteNew(client, elements);
 
+    if (promoted > 0) {
+      await client.query('select compute_bench_min_zoom()');
+    }
+
     await client.query('commit');
     return { loaded, promoted, skipped };
   } catch (error) {
