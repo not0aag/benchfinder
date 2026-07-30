@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(5);
+select plan(6);
 
 -- ---------- fixtures ----------
 insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
@@ -36,6 +36,12 @@ select throws_ok(
   '22023',
   null,
   'invalid zoom is rejected'
+);
+select throws_ok(
+  $$select bench_tile(14, 16384, 0)$$,
+  '22023',
+  null,
+  'invalid x coordinate is rejected'
 );
 
 -- publish the pending bench through the sanctioned path, tile appears

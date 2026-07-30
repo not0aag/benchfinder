@@ -22,4 +22,8 @@ jobs:
 
       - run: pnpm format:check
 
+      - run: node tools/phase-gate/check-phase-gates.mjs
+
+      - run: node tools/perf/check-budgets.mjs
+
       - run: pnpm exec turbo run typecheck lint test build

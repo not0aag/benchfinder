@@ -6,6 +6,8 @@ const validRow = {
   id: 'b31f9de8-0000-4000-8000-000000000001',
   lat: 43.444,
   lon: -79.66,
+  origin: 'user',
+  source_osm_id: null,
   verification_state: 'unconfirmed',
   has_backrest: true,
   has_armrests: null,

@@ -17,6 +17,12 @@ function triState(value: boolean | null, t: (key: string) => string): string {
   return value ? t('bench.yes') : t('bench.no');
 }
 
+function formatDate(value: string): string {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(parsed);
+}
+
 export function BenchDetailCard({ benchId, onClose }: Props) {
   const { t } = useTranslation();
   const { data, isPending, isError } = useQuery({
@@ -49,6 +55,10 @@ export function BenchDetailCard({ benchId, onClose }: Props) {
             {' · '}
             {t(`bench.materials.${data.material}`)}
           </ThemedText>
+          <ThemedText themeColor="textSecondary" type="small">
+            {t('bench.provenanceLabel')}: {t(`bench.provenance.${data.origin}`)}
+            {data.source_osm_id !== null ? ` (#${data.source_osm_id})` : ''}
+          </ThemedText>
           <ThemedText type="small">
             {t('bench.backrest')}: {triState(data.has_backrest, t)}
             {'   '}
@@ -57,6 +67,12 @@ export function BenchDetailCard({ benchId, onClose }: Props) {
           <ThemedText type="small">
             {t('bench.accessible')}: {triState(data.is_accessible, t)}
             {data.seats !== null ? `   ${t('bench.seats')}: ${data.seats}` : ''}
+          </ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            {t('bench.confirmations')}: {data.confirm_count} · {t('bench.disputes')}: {data.dispute_count}
+          </ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            {t('bench.lastUpdated')}: {formatDate(data.updated_at)}
           </ThemedText>
           {data.rating_count > 0 ? (
             <ThemedText type="small" themeColor="textSecondary">

@@ -19,6 +19,8 @@ export const benchDetailSchema = z.object({
   id: z.uuid(),
   lat: z.number().min(-90).max(90),
   lon: z.number().min(-180).max(180),
+  origin: z.enum(['osm', 'user', 'import']),
+  source_osm_id: z.number().int().nullable(),
   verification_state: z.enum(VERIFICATION_STATES),
   has_backrest: z.boolean().nullable(),
   has_armrests: z.boolean().nullable(),

@@ -9,12 +9,12 @@
     "followMe": "Follow my location",
     "stopFollowing": "Stop following my location",
     "locationDenied": "Location permission was denied. Enable it in system settings to use follow mode.",
-    "attribution": "© OpenStreetMap contributors"
+    "attribution": "\u00a9 OpenStreetMap contributors"
   },
   "bench": {
     "title": "Bench",
     "close": "Close",
-    "loading": "Loading bench…",
+    "loading": "Loading bench\u2026",
     "error": "Could not load this bench.",
     "yes": "Yes",
     "no": "No",
@@ -41,6 +41,15 @@
       "composite": "Composite",
       "mixed": "Mixed",
       "unknown": "Unknown material"
+    },
+    "provenanceLabel": "Source",
+    "confirmations": "Confirmations",
+    "disputes": "Disputes",
+    "lastUpdated": "Last updated",
+    "provenance": {
+      "osm": "OpenStreetMap-seeded",
+      "user": "Community-submitted",
+      "import": "Imported"
     }
   },
   "nearby": {
