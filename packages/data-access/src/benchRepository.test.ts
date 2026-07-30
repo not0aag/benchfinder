@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { createBenchRepository } from './benchRepository.js';
 
 const validBenchRow = {
-  id: '11111111-1111-1111-1111-111111111111',
+  id: 'b31f9de8-0000-4000-8000-000000000001',
   lat: 43.444,
   lon: -79.66,
   origin: 'user',
