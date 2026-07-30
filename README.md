@@ -11,7 +11,7 @@ BenchFinder is a mobile app that maps public benches: where they are, what shape
 
 ## How it works
 
-- **The map is tiles, not markers.** Bench data is served as MapLibre vector tiles straight out of PostGIS. The client never fetches bench collections as rows, so the map stays fast whether it shows one town or the whole planet. Row queries exist only for the detail sheet and nearby list.
+- **The map is tiles, not markers.** Bench data is served as MapLibre vector tiles straight out of PostGIS. The client never fetches bench collections as rows, so the map stays fast whether it shows one town or the whole planet. Row queries exist only for the detail sheet, nearby list, and admin dashboard.
 - **OSM data and community data never mix.** OpenStreetMap features (ODbL) live in `osm_features`; community contributions live in `bf_benches`. Provenance is tracked per row, so licensing stays clean as the dataset grows.
 - **Trust, not moderation queues.** Contributions move through verification states (`unverified`, `community_verified`, `flagged`) driven by contributor reputation. State transitions happen only inside `SECURITY DEFINER` Postgres functions; the client cannot write them, and every RLS policy has a pgTAP test for both its allow and deny case.
 - **Unknown is not false.** Physical attributes (backrest, armrests, material) are nullable. A bench nobody has inspected is different from a bench without a backrest.
