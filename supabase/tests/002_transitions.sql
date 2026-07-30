@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(15);
+select plan(17);
 
 -- ---------- fixtures ----------
 insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
@@ -49,6 +49,18 @@ select is(
      and action = 'status:pending->published'),
   1::bigint,
   'transition wrote an audit event'
+);
+
+select lives_ok(
+  $$select moderate_bench_status('30000000-0000-0000-0000-000000000001', 'published', 'same state no-op')$$,
+  'same status moderation call is a no-op'
+);
+select is(
+  (select count(*) from moderation_events
+   where bench_id = '30000000-0000-0000-0000-000000000001'
+     and action = 'status:pending->published'),
+  1::bigint,
+  'no duplicate audit event for no-op status update'
 );
 
 set local role anon;

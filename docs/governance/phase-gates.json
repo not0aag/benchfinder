@@ -1,0 +1,156 @@
+{
+  "currentPhase": 4,
+  "lastReviewedAt": "2026-07-30",
+  "phases": [
+    {
+      "phase": 0,
+      "name": "Foundation",
+      "criteria": [
+        {
+          "id": "ci-green",
+          "description": "pnpm build and pnpm test green in CI",
+          "done": true
+        },
+        {
+          "id": "dev-builds",
+          "description": "Dev build installs on physical Android and iOS simulator",
+          "done": true
+        }
+      ]
+    },
+    {
+      "phase": 1,
+      "name": "Data foundation + OSM ingestion",
+      "criteria": [
+        {
+          "id": "halton-queryable",
+          "description": "OSM benches in Halton are queryable from bf_benches",
+          "done": true
+        },
+        {
+          "id": "pgtap-green",
+          "description": "All pgTAP tests pass",
+          "done": true
+        }
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "Tile pipeline",
+      "criteria": [
+        {
+          "id": "tile-endpoint-valid",
+          "description": "/tiles/benches/{z}/{x}/{y}.mvt returns valid MVT",
+          "done": true
+        },
+        {
+          "id": "maplibre-debug-verified",
+          "description": "Tile output verified in MapLibre debug page",
+          "done": true
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Map screen",
+      "criteria": [
+        {
+          "id": "fps-target",
+          "description": "Smooth pan/zoom on mid-range Android",
+          "done": true
+        },
+        {
+          "id": "airplane-mode",
+          "description": "Works in airplane mode with cached pack",
+          "done": true
+        }
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "Bench detail",
+      "criteria": [
+        {
+          "id": "a11y-flow",
+          "description": "VoiceOver and TalkBack complete full read flow",
+          "done": false
+        },
+        {
+          "id": "tablet-pass",
+          "description": "Detail sheet verified on 10-inch tablet",
+          "done": false
+        }
+      ]
+    },
+    {
+      "phase": 5,
+      "name": "Auth + profile",
+      "criteria": [
+        {
+          "id": "cross-platform-signin",
+          "description": "Sign in works on iOS and Android",
+          "done": false
+        },
+        {
+          "id": "rls-cross-user-writes-blocked",
+          "description": "RLS blocks cross-user writes",
+          "done": false
+        }
+      ]
+    },
+    {
+      "phase": 6,
+      "name": "Capture flow",
+      "criteria": [
+        {
+          "id": "offline-sync",
+          "description": "Offline submission syncs on reconnect",
+          "done": false
+        },
+        {
+          "id": "non-bench-rejection",
+          "description": "Non-bench photo rejected before upload",
+          "done": false
+        }
+      ]
+    },
+    {
+      "phase": 7,
+      "name": "Community verification",
+      "criteria": [
+        {
+          "id": "second-account-confirms",
+          "description": "Second account can confirm a bench to confirmed state",
+          "done": false
+        }
+      ]
+    },
+    {
+      "phase": 8,
+      "name": "Admin dashboard",
+      "criteria": [
+        {
+          "id": "moderation-loop",
+          "description": "Moderation loop works end to end on real submissions",
+          "done": false
+        }
+      ]
+    },
+    {
+      "phase": 9,
+      "name": "Production hardening",
+      "criteria": [
+        {
+          "id": "restore-drill",
+          "description": "Backup restore drill completed successfully",
+          "done": false
+        },
+        {
+          "id": "store-accepted",
+          "description": "Store submissions accepted",
+          "done": false
+        }
+      ]
+    }
+  ]
+}
