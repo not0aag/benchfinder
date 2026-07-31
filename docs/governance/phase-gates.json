@@ -1,5 +1,5 @@
 {
-  "currentPhase": 4,
+  "currentPhase": 0,
   "lastReviewedAt": "2026-07-30",
   "phases": [
     {
@@ -14,7 +14,7 @@
         {
           "id": "dev-builds",
           "description": "Dev build installs on physical Android and iOS simulator",
-          "done": true
+          "done": false
         }
       ]
     },
@@ -25,7 +25,7 @@
         {
           "id": "halton-queryable",
           "description": "OSM benches in Halton are queryable from bf_benches",
-          "done": true
+          "done": false
         },
         {
           "id": "pgtap-green",
@@ -41,12 +41,12 @@
         {
           "id": "tile-endpoint-valid",
           "description": "/tiles/benches/{z}/{x}/{y}.mvt returns valid MVT",
-          "done": true
+          "done": false
         },
         {
           "id": "maplibre-debug-verified",
           "description": "Tile output verified in MapLibre debug page",
-          "done": true
+          "done": false
         }
       ]
     },
@@ -57,12 +57,12 @@
         {
           "id": "fps-target",
           "description": "Smooth pan/zoom on mid-range Android",
-          "done": true
+          "done": false
         },
         {
           "id": "airplane-mode",
           "description": "Works in airplane mode with cached pack",
-          "done": true
+          "done": false
         }
       ]
     },
