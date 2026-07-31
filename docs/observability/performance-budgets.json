@@ -1,14 +1,8 @@
 {
-  "measuredAt": "2026-07-30",
   "budgetsMs": {
     "map_initial_render_p95": 1800,
     "tile_endpoint_p95": 250,
     "bench_detail_fetch_p95": 600
   },
-  "measurementsMs": {
-    "map_initial_render_p95": 1450,
-    "tile_endpoint_p95": 190,
-    "bench_detail_fetch_p95": 420
-  },
-  "notes": "Replace measurementsMs from CI/staging probes each release."
+  "notes": "Targets awaiting instrumentation. No automated measurement produces these numbers yet; see BENCHFINDER_ARCHITECTURE.md section 12, Phase 9."
 }
