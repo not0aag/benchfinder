@@ -9,12 +9,12 @@
     "followMe": "Follow my location",
     "stopFollowing": "Stop following my location",
     "locationDenied": "Location permission was denied. Enable it in system settings to use follow mode.",
-    "attribution": "\u00a9 OpenStreetMap contributors"
+    "attribution": "© OpenStreetMap contributors"
   },
   "bench": {
     "title": "Bench",
     "close": "Close",
-    "loading": "Loading bench\u2026",
+    "loading": "Loading bench…",
     "error": "Could not load this bench.",
     "yes": "Yes",
     "no": "No",
