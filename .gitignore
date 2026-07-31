@@ -44,3 +44,6 @@ Thumbs.db
 npm-debug.*
 yarn-*.log
 pnpm-debug.log
+
+# agent scratch output
+get_hub_copilot_changes.md
