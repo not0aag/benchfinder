@@ -27,3 +27,21 @@ jobs:
       - run: node tools/perf/check-budgets.mjs
 
       - run: pnpm exec turbo run typecheck lint test build
+
+  db:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start local Supabase
+        run: supabase start
+
+      - name: Apply migrations from scratch
+        run: supabase db reset --no-seed
+
+      - name: Run pgTAP suites
+        run: supabase test db
