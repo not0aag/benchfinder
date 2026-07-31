@@ -1,6 +1,11 @@
 set search_path = public, extensions;
 
-create or replace view bench_details
+-- CREATE OR REPLACE VIEW cannot insert columns mid-list, only append.
+-- Drop and recreate to keep provenance columns adjacent to identity columns.
+-- Grants are dropped with the view, so they are re-issued below.
+drop view if exists bench_details;
+
+create view bench_details
 with (security_invoker = true)
 as
 select
