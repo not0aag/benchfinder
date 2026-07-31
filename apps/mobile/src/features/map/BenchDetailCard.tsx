@@ -20,7 +20,9 @@ function triState(value: boolean | null, t: (key: string) => string): string {
 function formatDate(value: string): string {
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return value;
-  return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(parsed);
+  return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(
+    parsed,
+  );
 }
 
 export function BenchDetailCard({ benchId, onClose }: Props) {
@@ -69,7 +71,8 @@ export function BenchDetailCard({ benchId, onClose }: Props) {
             {data.seats !== null ? `   ${t('bench.seats')}: ${data.seats}` : ''}
           </ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            {t('bench.confirmations')}: {data.confirm_count} · {t('bench.disputes')}: {data.dispute_count}
+            {t('bench.confirmations')}: {data.confirm_count} · {t('bench.disputes')}:{' '}
+            {data.dispute_count}
           </ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
             {t('bench.lastUpdated')}: {formatDate(data.updated_at)}
