@@ -28,6 +28,11 @@ Solo developer. Optimize for maintainability by one person, not for team through
 6. **`packages/domain` has zero runtime dependencies.** No React, no Supabase, no fetch. If you need one, the logic belongs elsewhere.
 7. **No secrets in committed files.** EAS secrets for build-time, edge function env for runtime.
 8. **Nullable means unknown.** Do not default physical attributes to `false`. `NULL` and `false` carry different meaning in this domain.
+9. **Migrations must be executed, not reviewed.** Every SQL migration runs against a live
+   Postgres via `pnpm db:reset` followed by a full `pnpm test:db` before it is committed.
+   A migration that has only been read is not validated.
+10. **No CI gate over hand-authored data.** If a check's input is not produced by an
+    automated measurement, it is a checklist item, not a pipeline step.
 
 ---
 
