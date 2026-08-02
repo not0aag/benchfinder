@@ -33,7 +33,6 @@ export const benchDetailSchema = z.object({
   seats: z.number().int().min(1).max(50).nullable(),
   facing_degrees: z.number().int().min(0).max(359).nullable(),
   description: z.string().max(500).nullable(),
-  photo_count: z.number().int().nonnegative(),
   rating_count: z.number().int().nonnegative(),
   scenic_avg: z.coerce.number().nullable(),
   comfort_avg: z.coerce.number().nullable(),

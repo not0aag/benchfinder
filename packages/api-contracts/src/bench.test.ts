@@ -20,7 +20,6 @@ const validRow = {
   seats: 3,
   facing_degrees: 180,
   description: null,
-  photo_count: 0,
   rating_count: 2,
   scenic_avg: '4.50',
   comfort_avg: null,
