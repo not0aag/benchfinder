@@ -111,3 +111,5 @@ pnpm osm:import <region> # Ingest a Geofabrik extract
 - Computing aggregates on read (they are trigger-maintained columns)
 - Calling a cloud model where an on-device model or plain math suffices
 - Google Places API. It is expensive and this app does not need it.
+- Adding photo capture, image storage, or any image-processing dependency.
+  Deliberately removed. Reopen only as an explicit, planned feature.

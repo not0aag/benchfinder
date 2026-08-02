@@ -100,7 +100,7 @@
     },
     {
       "phase": 6,
-      "name": "Capture flow",
+      "name": "Submission flow",
       "criteria": [
         {
           "id": "offline-sync",
@@ -108,8 +108,8 @@
           "done": false
         },
         {
-          "id": "non-bench-rejection",
-          "description": "Non-bench photo rejected before upload",
+          "id": "proximity-gate",
+          "description": "Submission beyond 150 m of the device fix is rejected server-side",
           "done": false
         }
       ]

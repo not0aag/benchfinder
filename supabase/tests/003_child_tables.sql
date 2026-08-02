@@ -1,6 +1,8 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(35);
+select plan(24);
+
+select hasnt_table('public', 'bench_photos', 'bench_photos table is removed');
 
 -- ---------- fixtures ----------
 insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
@@ -18,105 +20,6 @@ select set_config('benchfinder.state_transition', '', true);
 insert into bf_benches (id, geom, origin, status, verification_state, created_by) values
   ('40000000-0000-0000-0000-000000000001', st_setsrid(st_makepoint(-79.70, 43.45), 4326)::geography, 'user', 'published', 'community', '00000000-0000-0000-0000-000000000002'),
   ('40000000-0000-0000-0000-000000000002', st_setsrid(st_makepoint(-79.71, 43.46), 4326)::geography, 'user', 'pending', 'unconfirmed', '00000000-0000-0000-0000-000000000001');
-
--- ---------- bench_photos ----------
-set local role authenticated;
-select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000001","role":"authenticated"}', true);
-
-select lives_ok(
-  $$insert into bench_photos (id, bench_id, storage_path, phash, width, height, bytes, uploaded_by)
-    values ('50000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000001', 'p/1.jpg', b'0'::bit(64), 100, 100, 1000, '00000000-0000-0000-0000-000000000001')$$,
-  'user can add a photo to a published bench'
-);
-select throws_ok(
-  $$insert into bench_photos (bench_id, storage_path, phash, width, height, bytes, uploaded_by)
-    values ('40000000-0000-0000-0000-000000000001', 'p/2.jpg', b'0'::bit(64), 100, 100, 1000, '00000000-0000-0000-0000-000000000002')$$,
-  '42501',
-  null,
-  'uploader cannot be spoofed'
-);
-select lives_ok(
-  $$insert into bench_photos (id, bench_id, storage_path, phash, width, height, bytes, uploaded_by)
-    values ('50000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000002', 'p/3.jpg', b'0'::bit(64), 100, 100, 1000, '00000000-0000-0000-0000-000000000001')$$,
-  'owner can add a photo to own pending bench'
-);
-
-reset role;
-set local role authenticated;
-select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000002","role":"authenticated"}', true);
-select throws_ok(
-  $$insert into bench_photos (bench_id, storage_path, phash, width, height, bytes, uploaded_by)
-    values ('40000000-0000-0000-0000-000000000002', 'p/4.jpg', b'0'::bit(64), 100, 100, 1000, '00000000-0000-0000-0000-000000000002')$$,
-  '42501',
-  null,
-  'stranger cannot attach photos to an invisible pending bench'
-);
-
-reset role;
-set local role anon;
-select set_config('request.jwt.claims', '', true);
-select is(
-  (select count(*) from bench_photos where bench_id = '40000000-0000-0000-0000-000000000001'),
-  1::bigint,
-  'anon sees photos of published benches'
-);
-select is(
-  (select count(*) from bench_photos where bench_id = '40000000-0000-0000-0000-000000000002'),
-  0::bigint,
-  'anon cannot see photos of pending benches'
-);
-
-reset role;
-set local role authenticated;
-select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000002","role":"authenticated"}', true);
-update bench_photos set moderation = 'approved' where id = '50000000-0000-0000-0000-000000000001';
-reset role;
-select is(
-  (select moderation from bench_photos where id = '50000000-0000-0000-0000-000000000001'),
-  'pending',
-  'non-moderator cannot change photo moderation'
-);
-
-set local role authenticated;
-select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated"}', true);
-update bench_photos set moderation = 'approved' where id = '50000000-0000-0000-0000-000000000001';
-reset role;
-select is(
-  (select moderation from bench_photos where id = '50000000-0000-0000-0000-000000000001'),
-  'approved',
-  'moderator can change photo moderation'
-);
-
-set local role authenticated;
-select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000002","role":"authenticated"}', true);
-delete from bench_photos where id = '50000000-0000-0000-0000-000000000001';
-reset role;
-select is(
-  (select count(*) from bench_photos where id = '50000000-0000-0000-0000-000000000001'),
-  1::bigint,
-  'stranger cannot delete another user''s photo'
-);
-
-set local role authenticated;
-select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000001","role":"authenticated"}', true);
-delete from bench_photos where id = '50000000-0000-0000-0000-000000000001';
-reset role;
-select is(
-  (select count(*) from bench_photos where id = '50000000-0000-0000-0000-000000000001'),
-  0::bigint,
-  'uploader can delete own photo'
-);
-
-select is(
-  (select photo_count from bf_benches where id = '40000000-0000-0000-0000-000000000001'),
-  0,
-  'photo_count aggregate tracks deletes'
-);
-select is(
-  (select photo_count from bf_benches where id = '40000000-0000-0000-0000-000000000002'),
-  1,
-  'photo_count aggregate tracks inserts'
-);
 
 -- ---------- bench_ratings ----------
 set local role authenticated;

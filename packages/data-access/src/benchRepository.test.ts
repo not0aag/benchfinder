@@ -20,7 +20,6 @@ const validBenchRow = {
   seats: 3,
   facing_degrees: 90,
   description: null,
-  photo_count: 1,
   rating_count: 1,
   scenic_avg: 4,
   comfort_avg: 4,
