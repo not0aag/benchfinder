@@ -4,7 +4,9 @@ import postgres from 'npm:postgres@3.4.5';
 // verify_jwt is off (config.toml): tiles carry only published-bench data and
 // must be CDN-cacheable without auth. ?v= is a cache-buster bumped on bulk
 // data changes; the handler ignores it.
-const sql = postgres(Deno.env.get('SUPABASE_DB_URL')!, {
+// EDGE_DB_URL is a local-dev override (see config.toml): Deno cannot resolve
+// the container hostname the CLI puts in SUPABASE_DB_URL. Unset when hosted.
+const sql = postgres(Deno.env.get('EDGE_DB_URL') ?? Deno.env.get('SUPABASE_DB_URL')!, {
   prepare: false,
   max: 4,
 });

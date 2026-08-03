@@ -112,8 +112,11 @@ port = 54324
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
+# Storage went out with photo capture (BENCHFINDER_ARCHITECTURE.md section 13).
+# Nothing in the app uploads or reads objects, and the container was failing its
+# health check and aborting `supabase start`.
 [storage]
-enabled = true
+enabled = false
 # The maximum file size allowed (e.g. "5MB", "500KB").
 file_size_limit = "50MiB"
 
@@ -382,8 +385,14 @@ inspector_port = 8083
 # The Deno major version to use.
 deno_version = 2
 
-# [edge_runtime.secrets]
-# secret_key = "env(SECRET_VALUE)"
+# Local-dev escape hatch for the tiles function. Deno cannot resolve the
+# CLI-generated container hostname (supabase_db_BenchApp) that SUPABASE_DB_URL
+# points at, so every tile request failed ENOTFOUND while the db container was
+# healthy. The db container also answers to the short alias `db`. The CLI
+# refuses to let secrets override SUPABASE_-prefixed names, hence the separate
+# variable. Unset in hosted deploys, where SUPABASE_DB_URL is used as normal.
+[edge_runtime.secrets]
+EDGE_DB_URL = "env(EDGE_DB_URL)"
 
 [analytics]
 enabled = true
