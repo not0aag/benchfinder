@@ -3,6 +3,11 @@ packages:
   - packages/*
   - tools/*
 
+# The isolated store puts CMake object paths ~135 chars over the 250-char cap
+# on Windows, so react-native-screens and react-native-worklets fail to compile.
+# Hoisting is what Expo documents for pnpm + React Native.
+nodeLinker: hoisted
+
 allowBuilds:
   esbuild: true
   unrs-resolver: true
